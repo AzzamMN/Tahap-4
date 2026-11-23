@@ -1,0 +1,163 @@
+{
+ "decision_modes": {
+  "priority": {
+   "steal_berhasil": 0.03,
+   "steal_gagal": 0.0,
+   "upeti": 0.87,
+   "mangsa": 0.73,
+   "sihir": 1.8,
+   "kabur": 18.9,
+   "korban": 0.97,
+   "ramuan_diambil": 1.23,
+   "hp_naga_akhir": 100,
+   "goblin_hidup": "23/30",
+   "infer_ms": 0.73
+  },
+  "meu": {
+   "steal_berhasil": 0.7,
+   "steal_gagal": 0.17,
+   "upeti": 1.37,
+   "mangsa": 0.23,
+   "sihir": 1.9,
+   "kabur": 5.1,
+   "korban": 0.53,
+   "ramuan_diambil": 1.77,
+   "hp_naga_akhir": 100,
+   "goblin_hidup": "27/30",
+   "infer_ms": 0.79
+  },
+  "mdp": {
+   "steal_berhasil": 0.0,
+   "steal_gagal": 0.0,
+   "upeti": 1.23,
+   "mangsa": 0.2,
+   "sihir": 0.5,
+   "kabur": 2.5,
+   "korban": 0.23,
+   "ramuan_diambil": 1.6,
+   "hp_naga_akhir": 100,
+   "goblin_hidup": "28/30",
+   "infer_ms": 0.77
+  }
+ },
+ "planners": {
+  "ucs": {
+   "masalah": 2858,
+   "ditemukan": 2858,
+   "node_rata2": 3.04,
+   "biaya_rata2": 8.8,
+   "ms_rata2": 0.006
+  },
+  "astar_goalcount": {
+   "masalah": 2858,
+   "ditemukan": 2858,
+   "node_rata2": 3.0,
+   "biaya_rata2": 8.8,
+   "ms_rata2": 0.004
+  },
+  "astar_hmax": {
+   "masalah": 2858,
+   "ditemukan": 2858,
+   "node_rata2": 2.92,
+   "biaya_rata2": 8.8,
+   "ms_rata2": 0.059
+  }
+ },
+ "mdp_gamma": {
+  "0.5": {
+   "mage-naga": {
+    "iterasi": 11,
+    "flee_dari_25": 14,
+    "V_5_5": -5.7
+   },
+   "naga-mage": {
+    "iterasi": 10,
+    "flee_dari_25": 3,
+    "V_5_5": 6.9
+   },
+   "goblin-mage": {
+    "iterasi": 11,
+    "flee_dari_25": 14,
+    "V_5_5": -4.8
+   }
+  },
+  "0.8": {
+   "mage-naga": {
+    "iterasi": 8,
+    "flee_dari_25": 16,
+    "V_5_5": -12.6
+   },
+   "naga-mage": {
+    "iterasi": 9,
+    "flee_dari_25": 4,
+    "V_5_5": 24.3
+   },
+   "goblin-mage": {
+    "iterasi": 17,
+    "flee_dari_25": 16,
+    "V_5_5": -11.4
+   }
+  },
+  "0.9": {
+   "mage-naga": {
+    "iterasi": 8,
+    "flee_dari_25": 16,
+    "V_5_5": -13.8
+   },
+   "naga-mage": {
+    "iterasi": 10,
+    "flee_dari_25": 4,
+    "V_5_5": 33.3
+   },
+   "goblin-mage": {
+    "iterasi": 9,
+    "flee_dari_25": 18,
+    "V_5_5": -12.0
+   }
+  },
+  "0.95": {
+   "mage-naga": {
+    "iterasi": 8,
+    "flee_dari_25": 16,
+    "V_5_5": -14.4
+   },
+   "naga-mage": {
+    "iterasi": 10,
+    "flee_dari_25": 4,
+    "V_5_5": 38.6
+   },
+   "goblin-mage": {
+    "iterasi": 10,
+    "flee_dari_25": 18,
+    "V_5_5": -12.3
+   }
+  },
+  "0.99": {
+   "mage-naga": {
+    "iterasi": 8,
+    "flee_dari_25": 16,
+    "V_5_5": -14.9
+   },
+   "naga-mage": {
+    "iterasi": 10,
+    "flee_dari_25": 4,
+    "V_5_5": 43.3
+   },
+   "goblin-mage": {
+    "iterasi": 9,
+    "flee_dari_25": 19,
+    "V_5_5": -12.5
+   }
+  }
+ },
+ "kb": {
+  "aturan": 28,
+  "fakta_statis": 44,
+  "facts": 81,
+  "derived": 21,
+  "derived_dyn": 8,
+  "rounds": 3,
+  "firings": 21,
+  "ms": 0.82
+ }
+}

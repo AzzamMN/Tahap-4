@@ -1,0 +1,240 @@
+{
+ "baseline": {
+  "aturan": 28,
+  "fakta_statis": 44,
+  "kategori": {
+   "R": [
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R5",
+    "R6",
+    "R7",
+    "R7b",
+    "R7c",
+    "R8"
+   ],
+   "C": [
+    "C1",
+    "C2",
+    "C3"
+   ],
+   "A": [
+    "A1",
+    "A2",
+    "A2b",
+    "A3",
+    "A4",
+    "A5",
+    "A6",
+    "A7",
+    "A8",
+    "A9"
+   ],
+   "G": [
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+   ]
+  }
+ },
+ "skala_inferensi": [
+  {
+   "fakta_dinamis": 0,
+   "fakta": 57,
+   "turunan": 13,
+   "turunan_dinamis": 0,
+   "ronde": 2,
+   "ms": 0.592
+  },
+  {
+   "fakta_dinamis": 3,
+   "fakta": 60,
+   "turunan": 13,
+   "turunan_dinamis": 0,
+   "ronde": 2,
+   "ms": 0.553
+  },
+  {
+   "fakta_dinamis": 6,
+   "fakta": 63,
+   "turunan": 13,
+   "turunan_dinamis": 0,
+   "ronde": 2,
+   "ms": 0.552
+  },
+  {
+   "fakta_dinamis": 9,
+   "fakta": 66,
+   "turunan": 13,
+   "turunan_dinamis": 0,
+   "ronde": 2,
+   "ms": 0.618
+  },
+  {
+   "fakta_dinamis": 12,
+   "fakta": 69,
+   "turunan": 13,
+   "turunan_dinamis": 0,
+   "ronde": 2,
+   "ms": 0.544
+  },
+  {
+   "fakta_dinamis": 15,
+   "fakta": 72,
+   "turunan": 13,
+   "turunan_dinamis": 0,
+   "ronde": 2,
+   "ms": 0.581
+  },
+  {
+   "fakta_dinamis": 18,
+   "fakta": 81,
+   "turunan": 19,
+   "turunan_dinamis": 6,
+   "ronde": 3,
+   "ms": 0.906
+  },
+  {
+   "fakta_dinamis": 21,
+   "fakta": 85,
+   "turunan": 20,
+   "turunan_dinamis": 7,
+   "ronde": 3,
+   "ms": 1.14
+  },
+  {
+   "fakta_dinamis": 24,
+   "fakta": 89,
+   "turunan": 21,
+   "turunan_dinamis": 8,
+   "ronde": 3,
+   "ms": 1.256
+  },
+  {
+   "fakta_dinamis": 24,
+   "fakta": 89,
+   "turunan": 21,
+   "turunan_dinamis": 8,
+   "ronde": 3,
+   "ms": 1.224
+  }
+ ],
+ "ablations": {
+  "tanpa R1-R6 (relasi turunan)": {
+   "aturan_tersisa": 22,
+   "fakta": 63,
+   "turunan": 0,
+   "ronde": 0,
+   "ms": 0.061
+  },
+  "tanpa R7-R8 (ancaman)": {
+   "aturan_tersisa": 24,
+   "fakta": 78,
+   "turunan": 15,
+   "ronde": 2,
+   "ms": 0.543
+  },
+  "tanpa C1-C3 (kemampuan)": {
+   "aturan_tersisa": 25,
+   "fakta": 79,
+   "turunan": 16,
+   "ronde": 3,
+   "ms": 0.824
+  },
+  "tanpa A1-A9 (aksi)": {
+   "aturan_tersisa": 18,
+   "fakta": 78,
+   "turunan": 15,
+   "ronde": 2,
+   "ms": 1.491
+  },
+  "tanpa G1-G5 (tujuan)": {
+   "aturan_tersisa": 23,
+   "fakta": 82,
+   "turunan": 19,
+   "ronde": 3,
+   "ms": 0.904
+  }
+ },
+ "konflik": {
+  "naga": [],
+  "goblin": [
+   {
+    "aksi": "act(goblin,flee,mage)",
+    "aturan": [
+     "A5"
+    ],
+    "prioritas": 88
+   }
+  ],
+  "mage": [
+   {
+    "aksi": "act(mage,flee,naga)",
+    "aturan": [
+     "A5"
+    ],
+    "prioritas": 88
+   },
+   {
+    "aksi": "act(mage,cast,naga)",
+    "aturan": [
+     "A9"
+    ],
+    "prioritas": 78
+   },
+   {
+    "aksi": "act(mage,cast,goblin)",
+    "aturan": [
+     "A9"
+    ],
+    "prioritas": 78
+   }
+  ]
+ },
+ "jejak_penurunan": [
+  "act(goblin,flee,mage)  <= A5 p=88",
+  "  threat(goblin,mage)  <= R7",
+  "    enemy(goblin,mage)  <= R1",
+  "      faction(goblin,monster)  [fakta]",
+  "      faction(mage,guild)  [fakta]",
+  "      hostile(monster,guild)  [fakta]",
+  "    stronger(mage,goblin)  <= R4",
+  "      power(mage,mid)  [fakta]",
+  "      power(goblin,low)  [fakta]",
+  "      outranks(mid,low)  [fakta]",
+  "    in_range(goblin,mage)  [fakta dinamis]",
+  "    hp_level(goblin,mid)  [fakta dinamis]"
+ ],
+ "planner": {
+  "ucs": {
+   "masalah": 200,
+   "ditemukan": 200,
+   "node_rata2": 3.19,
+   "biaya_rata2": 12.02,
+   "ms_rata2": 0.0059
+  },
+  "astar_goalcount": {
+   "masalah": 200,
+   "ditemukan": 200,
+   "node_rata2": 3.08,
+   "biaya_rata2": 12.02,
+   "ms_rata2": 0.0054
+  },
+  "astar_hmax": {
+   "masalah": 200,
+   "ditemukan": 200,
+   "node_rata2": 3.08,
+   "biaya_rata2": 12.02,
+   "ms_rata2": 0.0997
+  }
+ },
+ "rencana": {
+  "naga": [],
+  "goblin": [],
+  "mage": []
+ }
+}

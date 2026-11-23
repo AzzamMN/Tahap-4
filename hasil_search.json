@@ -1,0 +1,95 @@
+{
+ "pathfinding": {
+  "ucs": {
+   "node_rata2": 304.3,
+   "cost_rata2": 39.7,
+   "ms_rata2": 0.553,
+   "ditemukan": "60/60"
+  },
+  "astar_manhattan": {
+   "node_rata2": 194.5,
+   "cost_rata2": 39.7,
+   "ms_rata2": 0.383,
+   "ditemukan": "60/60",
+   "hemat_node_vs_ucs_persen": 36.1
+  },
+  "astar_euclidean": {
+   "node_rata2": 231.0,
+   "cost_rata2": 39.7,
+   "ms_rata2": 0.475,
+   "ditemukan": "60/60",
+   "hemat_node_vs_ucs_persen": 24.1
+  }
+ },
+ "generator": {
+  "csp": {
+   "berhasil": "60/60",
+   "skor_rata2": -27.45,
+   "skor_terbaik": 64.0,
+   "rute_rata2": 32.4,
+   "ms_rata2": 55.8,
+   "assign_rata2": 5.0,
+   "backtrack_rata2": 0.0,
+   "revisi_ac3_rata2": 75.0,
+   "langkah_ls_rata2": 0.0,
+   "domain_before_rata2": 1568.0,
+   "domain_after_rata2": 1558.0
+  },
+  "ls": {
+   "berhasil": "60/60",
+   "skor_rata2": -15.52,
+   "skor_terbaik": 48.0,
+   "rute_rata2": 23.7,
+   "ms_rata2": 1.92,
+   "assign_rata2": 0.0,
+   "backtrack_rata2": 0.0,
+   "revisi_ac3_rata2": 0.0,
+   "langkah_ls_rata2": 1.3,
+   "domain_before_rata2": 0.0,
+   "domain_after_rata2": 0.0
+  },
+  "hybrid": {
+   "berhasil": "60/60",
+   "skor_rata2": 63.37,
+   "skor_terbaik": 80.0,
+   "rute_rata2": 39.7,
+   "ms_rata2": 67.35,
+   "assign_rata2": 5.0,
+   "backtrack_rata2": 0.0,
+   "revisi_ac3_rata2": 75.0,
+   "langkah_ls_rata2": 155.4,
+   "domain_before_rata2": 1568.0,
+   "domain_after_rata2": 1558.0
+  }
+ },
+ "dampak_csp": {
+  "lengkap (MRV+LCV+AC3)": {
+   "berhasil": "30/30",
+   "ms_rata2": 54.36,
+   "assign_rata2": 5.0,
+   "backtrack_rata2": 0.0,
+   "domain_after_rata2": 1558.0
+  },
+  "tanpa AC-3": {
+   "berhasil": "30/30",
+   "ms_rata2": 43.37,
+   "assign_rata2": 8.7,
+   "backtrack_rata2": 3.7,
+   "domain_after_rata2": 1568.0
+  },
+  "tanpa MRV": {
+   "berhasil": "30/30",
+   "ms_rata2": 54.07,
+   "assign_rata2": 5.0,
+   "backtrack_rata2": 0.0,
+   "domain_after_rata2": 1558.0
+  },
+  "tanpa LCV": {
+   "berhasil": "30/30",
+   "ms_rata2": 13.69,
+   "assign_rata2": 5.0,
+   "backtrack_rata2": 0.0,
+   "domain_after_rata2": 1558.0
+  }
+ }
+}

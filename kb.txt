@@ -1,0 +1,70 @@
+# =====================================================================
+# BASIS PENGETAHUAN (KB) - interaksi NPC dengan NPC di dunia Ksatria vs Naga
+# Sintaks : fakta   nama(arg, ...).
+#           aturan  [ID p=prioritas] kepala :- badan1, badan2.
+# Huruf kapital = variabel, huruf kecil/angka = konstanta. neq(X,Y) : X tidak sama dengan Y.
+# Prioritas p dipakai untuk menyelesaikan konflik antar aturan aksi (makin besar makin menang).
+# Fakta dinamis dibangkitkan game tiap giliran (bukan di file ini):
+#   alive(X) hp_level(X,low|mid|high) has_potion(X) no_potion(X) hungry(X)
+#   adjacent(X,Y) <= 1 petak | in_range(X,Y) <= 3 petak | near(X,Y) <= 6 petak (Manhattan)
+# =====================================================================
+
+# ---------------- fakta statis: identitas ----------------
+npc(naga). npc(goblin). npc(mage).
+species(naga, dragon). species(goblin, goblin). species(mage, wizard).
+faction(naga, monster). faction(goblin, monster). faction(mage, guild).
+hostile(monster, guild). hostile(guild, monster).
+eats(dragon, goblin).
+power(naga, high). power(mage, mid). power(goblin, low).
+outranks(high, mid). outranks(high, low). outranks(mid, low).
+trait(naga, proud).
+trait(goblin, thief). trait(goblin, tributary). trait(goblin, greedy).
+trait(mage, caster). trait(mage, wise).
+
+# ---------------- fakta statis: angka (dipakai planner & decision) ----------------
+maxhp(naga, 100). maxhp(goblin, 40). maxhp(mage, 60).
+melee(naga, 25, 80). melee(goblin, 8, 60). melee(mage, 4, 60).      # damage, peluang kena (%)
+spell(mage, 18, 70).                                                # damage, peluang kena (%)
+steal_chance(goblin, 55).
+flee_chance(naga, 60). flee_chance(goblin, 75). flee_chance(mage, 65).
+greed(naga, 4). greed(goblin, 12). greed(mage, 8).                  # nilai utilitas 1 ramuan
+caution(naga, 40). caution(goblin, 100). caution(mage, 70).         # bobot kerugian HP (%/50)
+speed(naga, 1). speed(goblin, 1). speed(mage, 2).                   # bergerak tiap `speed` giliran
+
+# ---------------- relasi turunan ----------------
+[R1] enemy(X,Y)    :- faction(X,F1), faction(Y,F2), hostile(F1,F2).
+[R2] friend(X,Y)   :- faction(X,F), faction(Y,F), neq(X,Y).
+[R3] predator(X,Y) :- species(X,S1), species(Y,S2), eats(S1,S2).
+[R4] stronger(X,Y) :- power(X,P1), power(Y,P2), outranks(P1,P2).
+[R5] needs(Y)      :- hungry(Y).
+[R6] needs(Y)      :- hp_level(Y,low).
+
+# ---------------- ancaman: Y mengancam X ----------------
+[R7]  threat(X,Y) :- enemy(X,Y), stronger(Y,X), in_range(X,Y), hp_level(X,mid).
+[R7b] threat(X,Y) :- enemy(X,Y), stronger(Y,X), in_range(X,Y), hp_level(X,low).
+[R7c] threat(X,Y) :- enemy(X,Y), power(Y,high), in_range(X,Y).
+[R8]  threat(X,Y) :- predator(Y,X), hungry(Y), near(X,Y), no_potion(X).
+
+# ---------------- kemampuan (izin interaksi) ----------------
+[C1] can(X,steal,Y)  :- trait(X,thief), enemy(X,Y).
+[C2] can(X,gift,Y)   :- trait(X,tributary), friend(X,Y).
+[C3] can(X,devour,Y) :- predator(X,Y).
+
+# ---------------- aksi yang diizinkan KB: act(pelaku, aksi, sasaran) ----------------
+[A1]  p=97 act(X,devour,Y) :- predator(X,Y), hungry(X), adjacent(X,Y).
+[A2]  p=96 act(X,drink,X)  :- hp_level(X,low), has_potion(X).
+[A2b] p=95 act(X,gift,Y)   :- can(X,gift,Y), has_potion(X), predator(Y,X), hungry(Y), adjacent(X,Y).
+[A3]  p=92 act(X,cast,Y)   :- trait(X,caster), enemy(X,Y), in_range(X,Y), hp_level(Y,low).
+[A4]  p=90 act(X,steal,Y)  :- can(X,steal,Y), has_potion(Y), adjacent(X,Y), hp_level(X,high).
+[A5]  p=88 act(X,flee,Y)   :- threat(X,Y).
+[A6]  p=85 act(X,gift,Y)   :- can(X,gift,Y), has_potion(X), needs(Y), adjacent(X,Y).
+[A7]  p=80 act(X,attack,Y) :- enemy(X,Y), adjacent(X,Y), hp_level(Y,low).
+[A8]  p=75 act(X,attack,Y) :- enemy(X,Y), adjacent(X,Y), stronger(X,Y).
+[A9]  p=78 act(X,cast,Y)   :- trait(X,caster), enemy(X,Y), in_range(X,Y).
+
+# ---------------- tujuan jangka panjang (masukan untuk automated planning) ----------------
+[G1] p=90 goal(X,shelter,Y) :- threat(X,Y), hp_level(X,low).
+[G2] p=70 goal(X,tribute,Y) :- can(X,gift,Y), has_potion(X), needs(Y).
+[G3] p=65 goal(X,hunt,Y)    :- can(X,devour,Y), hungry(X), near(X,Y).
+[G4] p=50 goal(X,loot,none)    :- can(X,steal,Y), no_potion(X).
+[G5] p=40 goal(X,collect,none) :- trait(X,caster), no_potion(X).

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ksatria vs Naga — Tugas Besar AI</title>
+
+  <!-- PyScript Resources -->
+  <link rel="stylesheet" href="https://pyscript.net/releases/2024.11.1/core.css" />
+  <script type="module" src="https://pyscript.net/releases/2024.11.1/core.js"></script>
+
+  <!-- External Stylesheet -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div id="app">
+
+  <header>
+    <h1>Ksatria vs Naga</h1>
+    <p>
+      Level dibuat oleh <b>CSP</b> (backtracking + MRV, LCV, AC-3) lalu diperbaiki <b>local search</b>:
+      posisi ksatria, naga, dan 3 ramuan. Gerakkan ksatria dengan panah atau WASD; naga mengejar lewat
+      UCS atau A*. Ramuan yang diambil dibawa ke <b>battle</b> turn-based (jarak Manhattan &le; 2), tempat
+      naga memilih aksi dengan Minimax / Alpha-Beta / Expectimax.
+    </p>
+    <p>
+      Di dunia ada dua NPC lain: <b>Goblin</b> (pencuri) dan <b>Penyihir</b>. Interaksi antar-NPC ditentukan oleh
+      <b>basis pengetahuan</b> (<code>kb.txt</code>, inferensi forward chaining). Tujuan yang disimpulkan KB dirangkai
+      oleh <b>automated planning</b> (STRIPS), dan aksi dipilih dengan <b>decision under uncertainty</b> (MEU / MDP).
+      Overlay di canvas menampilkan ronde inferensi satu per satu.
+    </p>
+  </header>
+
+  <main>
+    <div id="canvasWrap">
+      <canvas id="gameCanvas" width="640" height="640"></canvas>
+    </div>
+
+    <div id="panel">
+
+      <section>
+        <h2>Algoritma pengejaran naga</h2>
+        <select id="algoSelect">
+          <option value="ucs">UCS — Uniform Cost Search</option>
+          <option value="astar_manhattan" selected>A* — Manhattan Distance</option>
+          <option value="astar_euclidean">A* — Euclidean Distance</option>
+        </select>
+        <label class="chk"><input type="checkbox" id="ovToggle" checked /> Tampilkan open/closed set dan jalur</label>
+        <button id="resetBtn">Reset Permainan</button>
+      </section>
+
+
+      <section>
+        <h2>Generator level (CSP + local search)</h2>
+        <label>Metode
+          <select id="genMode">
+            <option value="hybrid" selected>Gabungan: CSP lalu simulated annealing</option>
+            <option value="csp">CSP saja (backtracking)</option>
+            <option value="ls">Local search saja (min-conflicts)</option>
+          </select></label>
+        <label class="chk"><input type="checkbox" id="genMrv" checked /> MRV (variabel paling terbatas dulu)</label>
+        <label class="chk"><input type="checkbox" id="genLcv" checked /> LCV (nilai paling tidak membatasi dulu)</label>
+        <label class="chk"><input type="checkbox" id="genAc3" checked /> AC-3 (propagasi setelah tiap assignment)</label>
+        <label>Seed (kosong = acak)
+          <input type="text" id="genSeed" inputmode="numeric" placeholder="mis. 42" /></label>
+        <button id="genBtn">Buat level baru</button>
+        <div id="genStats"></div>
+      </section>
+
+      <section id="battleSection" class="hidden">
+        <h2>Battle turn-based</h2>
+        <div class="hp-line"><span>Ksatria</span><span id="playerHpTxt"></span></div>
+        <div class="hp-track"><div id="playerHpBar" class="hp-fill player"></div></div>
+        <div class="hp-line"><span>Naga</span><span id="npcHpTxt"></span></div>
+        <div class="hp-track"><div id="npcHpBar" class="hp-fill npc"></div></div>
+        <div class="btn-row">
+          <button id="btnAttack">1 Attack</button>
+          <button id="btnDefend">2 Defend</button>
+          <button id="btnPotion">3 Potion</button>
+        </div>
+        <div id="battleLog"></div>
+        <h2>Debug: skor aksi dan node count</h2>
+        <div id="debugTable"></div>
+      </section>
+
+      <section>
+        <h2>Pengaturan AI battle</h2>
+        <label>Algoritma naga
+          <select id="battleAlgo">
+            <option value="minimax">Minimax</option>
+            <option value="alphabeta" selected>Alpha-Beta Pruning</option>
+            <option value="alphabeta_early">Alpha-Beta + Early Stop</option>
+            <option value="expectimax">Expectimax (lawan acak)</option>
+          </select></label>
+        <label>Fungsi evaluasi
+          <select id="battleEval">
+            <option value="balanced" selected>Balanced (HP + potion + shield)</option>
+            <option value="hp">Selisih HP</option>
+            <option value="aggressive">Agresif</option>
+            <option value="defensive">Defensif</option>
+            <option value="zero">Nol (kontrol)</option>
+          </select></label>
+        <label>Urutan aksi
+          <select id="battleOrder">
+            <option value="default" selected>attack, defend, potion</option>
+            <option value="reverse">potion, defend, attack</option>
+            <option value="defend_first">defend, potion, attack</option>
+            <option value="heuristic">heuristic (best-first)</option>
+          </select></label>
+        <label>Kedalaman (ply)
+          <select id="battleDepth">
+            <option>1</option><option>2</option><option>3</option><option selected>4</option>
+            <option>5</option><option>6</option><option>7</option><option>8</option>
+          </select></label>
+        <label>Budget node early stop
+          <select id="battleLimit">
+            <option>25</option><option selected>100</option><option>250</option><option>1000</option>
+          </select></label>
+        <label class="chk"><input type="checkbox" id="dbgToggle" checked /> Tampilkan debug overlay di canvas</label>
+      </section>
+
+      <section>
+        <h2>Dunia NPC: KB, planning, keputusan</h2>
+        <label>Pemilih aksi (decision under uncertainty)
+          <select id="decMode">
+            <option value="priority" selected>Prioritas aturan KB (deterministik)</option>
+            <option value="meu">MEU: expected utility satu langkah</option>
+            <option value="mdp">MDP: value iteration (jangka panjang)</option>
+          </select></label>
+        <label>Planner STRIPS
+          <select id="planAlgo">
+            <option value="ucs">UCS (tanpa heuristik)</option>
+            <option value="astar_goalcount">A* goal-count</option>
+            <option value="astar_hmax" selected>A* h_max (relaksasi delete)</option>
+          </select></label>
+        <label>Discount factor &gamma; (MDP)
+          <select id="mdpGamma"><option>0.5</option><option>0.8</option><option>0.9</option><option selected>0.95</option><option>0.99</option></select></label>
+        <label class="chk"><input type="checkbox" id="kbToggle" checked /> Overlay inferensi KB di canvas</label>
+        <label class="chk"><input type="checkbox" id="kbAnim" checked /> Animasikan ronde inferensi satu per satu</label>
+        <label class="chk"><input type="checkbox" id="planToggle" checked /> Tampilkan rencana NPC (garis putus-putus)</label>
+        <button id="waitBtn">Tunggu satu giliran (Spasi)</button>
+      </section>
+
+      <section>
+        <h2>Kejadian antar-NPC</h2>
+        <div id="worldLog"></div>
+      </section>
+
+      <section>
+        <h2>Inferensi KB (forward chaining)</h2>
+        <div id="kbStats"></div>
+        <pre id="kbTrace"></pre>
+      </section>
+
+      <section>
+        <h2>Keputusan: aksi yang diizinkan KB dan utilitasnya</h2>
+        <div id="decTable"></div>
+      </section>
+
+      <section>
+        <h2>Automated planning (STRIPS)</h2>
+        <div id="planTable"></div>
+      </section>
+
+      <section>
+        <h2>MDP pertarungan antar-NPC</h2>
+        <label>Pasangan (pelaku &rarr; lawan)
+          <select id="mdpPair">
+            <option value="mage-naga" selected>Penyihir &rarr; Naga</option>
+            <option value="naga-mage">Naga &rarr; Penyihir</option>
+            <option value="goblin-mage">Goblin &rarr; Penyihir</option>
+            <option value="mage-goblin">Penyihir &rarr; Goblin</option>
+            <option value="naga-goblin">Naga &rarr; Goblin</option>
+            <option value="goblin-naga">Goblin &rarr; Naga</option>
+          </select></label>
+        <div id="mdpBox"></div>
+      </section>
+
+      <section>
+        <h2>Legenda</h2>
+        <div class="legend-row"><span class="swatch" style="background:#3f6b34"></span> Rumput / Jalan (cost 1)</div>
+        <div class="legend-row"><span class="swatch" style="background:#8a6d3b"></span> Lumpur / Semak (cost 3)</div>
+        <div class="legend-row"><span class="swatch" style="background:#2b2f33"></span> Tembok batu (unwalkable)</div>
+        <div class="legend-row"><span class="swatch" style="background:#235d82"></span> Sungai (unwalkable)</div>
+        <div class="legend-row"><span class="swatch" style="background:#a9744a"></span> Jembatan (cost 1)</div>
+        <div class="legend-row"><span class="swatch" style="background:#e8404f"></span> Ramuan (+1 potion saat battle)</div>
+        <div class="legend-row"><span class="swatch" style="background:#7fc04a"></span> Goblin (pencuri, antek naga)</div>
+        <div class="legend-row"><span class="swatch" style="background:#7b4fd0"></span> Penyihir (anggota guild, membawa ramuan)</div>
+        <div class="overlay-legend">
+          <div class="legend-row"><span class="swatch" style="background:rgba(255,90,90,0.9)"></span> KB: musuh (putus-putus) / ancaman (tebal)</div>
+          <div class="legend-row"><span class="swatch" style="background:rgba(90,230,120,0.9)"></span> KB: sekutu</div>
+          <div class="legend-row"><span class="swatch" style="background:rgba(255,160,40,0.95)"></span> KB: pemangsa</div>
+          <div class="legend-row"><span class="swatch" style="background:#ffe14a"></span> Aksi terpilih / rencana Goblin</div>
+          <div class="legend-row"><span class="swatch" style="background:rgba(255,60,60,0.55)"></span> Closed set (node diekspansi)</div>
+          <div class="legend-row"><span class="swatch" style="background:rgba(255,220,60,0.55)"></span> Open set (dalam antrean)</div>
+          <div class="legend-row"><span class="swatch" style="background:rgba(60,255,120,0.7)"></span> Jalur akhir (final path)</div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Statistik pencarian jalur</h2>
+        <div class="stat-row"><span>Total node diekspansi</span><span id="statExpanded">0</span></div>
+        <div class="stat-row"><span>Total cost path g(n)</span><span id="statCost">0</span></div>
+        <div class="stat-row"><span>Ramuan dibawa</span><span id="statPot">0 / 0</span></div>
+        <div class="stat-row"><span>Waktu eksekusi</span><span><span id="statTime">0</span> ms</span></div>
+        <p id="statStatus">Bergerak dengan WASD / Panah</p>
+      </section>
+
+      <section>
+        <h2>Kontrol</h2>
+        <p class="keys">
+          <kbd>&uarr;</kbd> <kbd>&darr;</kbd> <kbd>&larr;</kbd> <kbd>&rarr;</kbd>
+          atau <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> untuk menggerakkan
+          ksatria. <kbd>Spasi</kbd> menunggu satu giliran. Saat battle: <kbd>1</kbd> Attack, <kbd>2</kbd> Defend, <kbd>3</kbd> Potion. Naga akan mengejar dengan algoritma yang dipilih di atas.
+        </p>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<!-- main.py + modul terpisah (KB, planner, decision, agents) dimuat lewat config files; jalankan lewat server HTTP -->
+<script type="py" src="main.py"
+        config='{"files": {"./kb.txt": "./kb.txt", "./kb_engine.py": "./kb_engine.py", "./planner.py": "./planner.py", "./decision.py": "./decision.py", "./agents.py": "./agents.py"}}'></script>
+
+</body>
+</html>

@@ -1,0 +1,267 @@
+{
+ "konfigurasi": {
+  "trials": 300,
+  "depths": [
+   2,
+   4,
+   6,
+   8
+  ],
+  "hp": 100,
+  "atk": 20,
+  "heal": 30,
+  "potion_awal": 2
+ },
+ "benchmark": {
+  "minimax": {
+   "2": {
+    "node": 8,
+    "cutoffs": 0,
+    "ms": 0.025,
+    "aksi": "attack"
+   },
+   "4": {
+    "node": 48,
+    "cutoffs": 0,
+    "ms": 0.067,
+    "aksi": "attack"
+   },
+   "6": {
+    "node": 297,
+    "cutoffs": 0,
+    "ms": 0.406,
+    "aksi": "attack"
+   },
+   "8": {
+    "node": 1872,
+    "cutoffs": 0,
+    "ms": 2.246,
+    "aksi": "attack"
+   }
+  },
+  "alphabeta": {
+   "2": {
+    "node": 7,
+    "cutoffs": 1,
+    "ms": 0.014,
+    "aksi": "attack"
+   },
+   "4": {
+    "node": 29,
+    "cutoffs": 8,
+    "ms": 0.041,
+    "aksi": "attack"
+   },
+   "6": {
+    "node": 98,
+    "cutoffs": 33,
+    "ms": 0.123,
+    "aksi": "attack"
+   },
+   "8": {
+    "node": 298,
+    "cutoffs": 109,
+    "ms": 0.37,
+    "aksi": "attack"
+   }
+  },
+  "expectimax": {
+   "2": {
+    "node": 8,
+    "cutoffs": 0,
+    "ms": 0.016,
+    "aksi": "attack"
+   },
+   "4": {
+    "node": 48,
+    "cutoffs": 0,
+    "ms": 0.059,
+    "aksi": "attack"
+   },
+   "6": {
+    "node": 297,
+    "cutoffs": 0,
+    "ms": 0.349,
+    "aksi": "attack"
+   },
+   "8": {
+    "node": 1872,
+    "cutoffs": 0,
+    "ms": 2.201,
+    "aksi": "attack"
+   }
+  }
+ },
+ "konsistensi": {
+  "2": {
+   "minimax": "attack",
+   "alphabeta": "attack",
+   "sama": true
+  },
+  "4": {
+   "minimax": "attack",
+   "alphabeta": "attack",
+   "sama": true
+  },
+  "6": {
+   "minimax": "attack",
+   "alphabeta": "attack",
+   "sama": true
+  },
+  "8": {
+   "minimax": "attack",
+   "alphabeta": "attack",
+   "sama": true
+  }
+ },
+ "hemat_node": {
+  "2": {
+   "minimax": 8,
+   "alphabeta": 7,
+   "persen_hemat": 12.5
+  },
+  "4": {
+   "minimax": 48,
+   "alphabeta": 29,
+   "persen_hemat": 39.6
+  },
+  "6": {
+   "minimax": 297,
+   "alphabeta": 98,
+   "persen_hemat": 67.0
+  },
+  "8": {
+   "minimax": 1872,
+   "alphabeta": 298,
+   "persen_hemat": 84.1
+  }
+ },
+ "win_rate": {
+  "player": 3,
+  "naga": 297,
+  "draw": 0,
+  "giliran_rata2": 19.3
+ },
+ "early_stop": {
+  "25": {
+   "node": 34,
+   "stopped": true,
+   "aksi": "attack"
+  },
+  "100": {
+   "node": 104,
+   "stopped": true,
+   "aksi": "attack"
+  },
+  "250": {
+   "node": 251,
+   "stopped": true,
+   "aksi": "attack"
+  },
+  "1000": {
+   "node": 298,
+   "stopped": false,
+   "aksi": "attack"
+  },
+  "None": {
+   "node": 298,
+   "stopped": false,
+   "aksi": "attack"
+  }
+ },
+ "fungsi_eval": {
+  "zero": {
+   "aksi": "attack",
+   "nilai": 0,
+   "node": 29
+  },
+  "hp": {
+   "aksi": "attack",
+   "nilai": 0,
+   "node": 31
+  },
+  "balanced": {
+   "aksi": "attack",
+   "nilai": 0,
+   "node": 29
+  },
+  "aggressive": {
+   "aksi": "attack",
+   "nilai": -150.0,
+   "node": 38
+  },
+  "defensive": {
+   "aksi": "defend",
+   "nilai": 134.0,
+   "node": 39
+  }
+ },
+ "kedalaman_kualitas": {
+  "zero": {
+   "2": {
+    "aksi": "attack",
+    "node": 7,
+    "nilai": 0
+   },
+   "4": {
+    "aksi": "attack",
+    "node": 29,
+    "nilai": 0
+   },
+   "6": {
+    "aksi": "attack",
+    "node": 98,
+    "nilai": 0
+   },
+   "8": {
+    "aksi": "attack",
+    "node": 298,
+    "nilai": 0
+   }
+  },
+  "balanced": {
+   "2": {
+    "aksi": "attack",
+    "node": 7,
+    "nilai": 0
+   },
+   "4": {
+    "aksi": "attack",
+    "node": 29,
+    "nilai": 0
+   },
+   "6": {
+    "aksi": "attack",
+    "node": 98,
+    "nilai": 0
+   },
+   "8": {
+    "aksi": "attack",
+    "node": 298,
+    "nilai": 0
+   }
+  },
+  "defensive": {
+   "2": {
+    "aksi": "defend",
+    "node": 8,
+    "nilai": 154.0
+   },
+   "4": {
+    "aksi": "defend",
+    "node": 39,
+    "nilai": 134.0
+   },
+   "6": {
+    "aksi": "attack",
+    "node": 147,
+    "nilai": 132.0
+   },
+   "8": {
+    "aksi": "attack",
+    "node": 492,
+    "nilai": 127.0
+   }
+  }
+ }
+}
